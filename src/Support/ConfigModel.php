@@ -1,7 +1,7 @@
 <?php
 namespace Riari\Forum\Support;
 
-use Pion\Laravel\Support\Loader\ClassGate;
+use Pionl\Laravel\Support\Loader\ClassGate;
 
 /**
  * Class ClassGate
