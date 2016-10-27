@@ -3,18 +3,17 @@
 use Carbon\Carbon;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Riari\Forum\Console\Commands\RefreshStats;
 use Riari\Forum\Http\Middleware\APIAuth;
-use Riari\Forum\Models\Post;
-use Riari\Forum\Models\Thread;
 use Riari\Forum\Models\Observers\PostObserver;
 use Riari\Forum\Models\Observers\ThreadObserver;
+use Riari\Forum\Support\ConfigModel;
 
 class ForumServiceProvider extends ServiceProvider
 {
+
     /**
      * Register the service provider.
      *
@@ -107,8 +106,22 @@ class ForumServiceProvider extends ServiceProvider
      */
     protected function observeModels()
     {
-        Thread::observe(new ThreadObserver);
-        Post::observe(new PostObserver);
+        $this->observeModel("thread", new ThreadObserver)
+            ->observeModel("post", new PostObserver);
+    }
+
+    /**
+     * Finds the models class and adds an observer
+     *
+     * @param string $configKey
+     * @param mixed  $observer
+     *
+     * @return $this
+     */
+    protected function observeModel($configKey, $observer)
+    {
+        ConfigModel::gate($configKey)->observe($observer);
+        return $this;
     }
 
     /**

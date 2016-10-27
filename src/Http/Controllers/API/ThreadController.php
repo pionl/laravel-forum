@@ -6,17 +6,18 @@ use Illuminate\Support\Facades\Gate;
 use Riari\Forum\Models\Category;
 use Riari\Forum\Models\Post;
 use Riari\Forum\Models\Thread;
+use Riari\Forum\Support\ConfigModel;
 
 class ThreadController extends BaseController
 {
     /**
-     * Return the model to use for this controller.
+     * Returns the model config key
      *
-     * @return Thread
+     * @return string
      */
-    protected function model()
+    protected function modelsConfigKey()
     {
-        return new Thread;
+        return "thread";
     }
 
     /**
@@ -89,7 +90,7 @@ class ThreadController extends BaseController
             'content'   => ['required']
         ]);
 
-        $category = Category::find($request->input('category_id'));
+        $category = ConfigModel::gate("category")->find($request->input('category_id'));
 
         $this->authorize('createThreads', $category);
 
@@ -98,7 +99,8 @@ class ThreadController extends BaseController
         }
 
         $thread = $this->model()->create($request->only(['category_id', 'author_id', 'title']));
-        Post::create(['thread_id' => $thread->id] + $request->only('author_id', 'content'));
+
+        ConfigModel::gate("post")->create(['thread_id' => $thread->id] + $request->only('author_id', 'content'));
 
         return $this->response($thread, 201);
     }
@@ -190,7 +192,7 @@ class ThreadController extends BaseController
 
         $thread = $this->model()->find($id);
 
-        $category = Category::find($request->input('category_id'));
+        $category = ConfigModel::gate("category")->find($request->input('category_id'));
 
         if (!$category->threadsEnabled) {
             return $this->buildFailedValidationResponse($request, trans('forum::validation.category_threads_enabled'));

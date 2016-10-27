@@ -1,6 +1,7 @@
 <?php namespace Riari\Forum\Models;
 
 use Illuminate\Support\Facades\Gate;
+use Riari\Forum\Support\ConfigModel;
 use Riari\Forum\Support\Traits\CachesData;
 
 class Category extends BaseModel
@@ -46,7 +47,7 @@ class Category extends BaseModel
      */
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'category_id')->orderBy('weight');
+        return $this->belongsTo(ConfigModel::objectClass("category"), 'category_id')->orderBy('weight');
     }
 
     /**
@@ -56,7 +57,7 @@ class Category extends BaseModel
      */
     public function categories()
     {
-        return $this->hasMany(Category::class, 'category_id')->orderBy('weight');
+        return $this->hasMany(ConfigModel::objectClass("category"), 'category_id')->orderBy('weight');
     }
 
     /**
@@ -67,7 +68,7 @@ class Category extends BaseModel
     public function threads()
     {
         $withTrashed = Gate::allows('viewTrashedThreads');
-        $query = $this->hasMany(Thread::class);
+        $query = $this->hasMany(ConfigModel::objectClass("thread"));
         return $withTrashed ? $query->withTrashed() : $query;
     }
 

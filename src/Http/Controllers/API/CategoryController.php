@@ -8,13 +8,13 @@ use Riari\Forum\Models\Category;
 class CategoryController extends BaseController
 {
     /**
-     * Return the model to use for this controller.
+     * Returns the model config key
      *
-     * @return Category
+     * @return string
      */
-    protected function model()
+    protected function modelsConfigKey()
     {
-        return new Category;
+        return "category";
     }
 
     /**

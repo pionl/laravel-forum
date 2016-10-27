@@ -8,13 +8,13 @@ use Riari\Forum\Models\Thread;
 class PostController extends BaseController
 {
     /**
-     * Return the model to use for this controller.
+     * Returns the model config key
      *
-     * @return Post
+     * @return string
      */
-    protected function model()
+    protected function modelsConfigKey()
     {
-        return new Post;
+        return "post";
     }
 
     /**
@@ -71,7 +71,7 @@ class PostController extends BaseController
     {
         $this->validate($request, ['thread_id' => ['required'], 'author_id' => ['required'], 'content' => ['required']]);
 
-        $thread = Thread::find($request->input('thread_id'));
+        $thread = ConfigModel::modelClass("thread")->find($request->input('thread_id'));
         $this->authorize('reply', $thread);
 
         $post = $this->model()->create($request->only(['thread_id', 'post_id', 'author_id', 'content']));

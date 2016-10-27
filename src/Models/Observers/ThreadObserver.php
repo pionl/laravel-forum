@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Riari\Forum\Models\Category;
 use Riari\Forum\Models\Thread;
+use Riari\Forum\Support\ConfigModel;
 use Riari\Forum\Support\Stats;
 
 class ThreadObserver
@@ -16,7 +17,7 @@ class ThreadObserver
     public function updating($thread)
     {
         if ($thread->getOriginal('category_id') != $thread->category_id) {
-            $oldCategory = Category::find($thread->getOriginal('category_id'));
+            $oldCategory = ConfigModel::objectClass("category")->find($thread->getOriginal('category_id'));
             $postCount = $thread->posts->count();
 
             // Decrement the old category's thread and post counts

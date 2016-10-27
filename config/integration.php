@@ -23,6 +23,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Models
+    |--------------------------------------------------------------------------
+    |
+    | Used models that you can override
+    |
+    */
+
+    'models' => [
+        'post' => Riari\Forum\Models\Post::class,
+        'category' => Riari\Forum\Models\Category::class,
+        'thread' => Riari\Forum\Models\Thread::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application user model
     |--------------------------------------------------------------------------
     |

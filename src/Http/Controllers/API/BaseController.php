@@ -10,6 +10,8 @@ use Illuminate\Http\Exception\HttpResponseException;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
+use Riari\Forum\Models\BaseModel;
+use Riari\Forum\Support\ConfigModel;
 
 abstract class BaseController extends Controller
 {
@@ -50,11 +52,20 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Return the model to use for this controller.
+     * Return the model to use for this controller. Uses model config key method.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return BaseModel
      */
-    abstract protected function model();
+    protected function model() {
+        return ConfigModel::instance($this->modelsConfigKey());
+    }
+
+    /**
+     * Returns the model config key
+     *
+     * @return string
+     */
+    abstract protected function modelsConfigKey();
 
     /**
      * Return the translation file name to use for this controller.
@@ -351,6 +362,7 @@ abstract class BaseController extends Controller
      */
     protected function runResponseQuery($query, $configKeyForPaginate, $handleCollectionCallback = null)
     {
+
         // check if paging is enabled and not zero
         $perPage = $this->getPerPageForConfigKey($configKeyForPaginate);
 

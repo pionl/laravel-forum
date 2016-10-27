@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Gate;
 use Riari\Forum\Models\Category;
 use Riari\Forum\Models\Post;
 use Riari\Forum\Models\Traits\HasAuthor;
+use Riari\Forum\Support\ConfigModel;
 use Riari\Forum\Support\Traits\CachesData;
 
 class Thread extends BaseModel
@@ -51,7 +52,7 @@ class Thread extends BaseModel
      */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(ConfigModel::objectClass("category"));
     }
 
     /**
@@ -77,7 +78,7 @@ class Thread extends BaseModel
     public function posts()
     {
         $withTrashed = config('forum.preferences.display_trashed_posts') || Gate::allows('viewTrashedPosts');
-        $query = $this->hasMany(Post::class);
+        $query = $this->hasMany(ConfigModel::objectClass("post"));
         return $withTrashed ? $query->withTrashed() : $query;
     }
 
