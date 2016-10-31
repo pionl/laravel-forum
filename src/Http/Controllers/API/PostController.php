@@ -75,8 +75,11 @@ class PostController extends BaseController
         $thread = ConfigModel::gate("thread")->find($request->input('thread_id'));
         $this->authorize('reply', $thread);
 
+        // create the new post
         $post = $this->model()->create($request->only(['thread_id', 'post_id', 'author_id', 'content']));
-        $post->load('thread');
+
+        // reuse the already returned thread
+        $post->setRelation('thread', $thread);
 
         return $this->response($post, $this->trans('created'), 201);
     }
