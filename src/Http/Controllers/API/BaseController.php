@@ -368,9 +368,9 @@ abstract class BaseController extends Controller
 
         if ($perPage > 0) {
             // run the paginate
-            $response = $query->paginate($perPage);
+            $response = $this->runPaginateQuery($query, $perPage);
         } else {
-            $response = $query->get();
+            $response = $this->runGetQuery($query);
         }
 
         // adapt the data by custom logic (for paginate not ideal...)
@@ -379,6 +379,31 @@ abstract class BaseController extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * Runs the paginate query
+     *
+     * @param Builder $query
+     * @param int $perPage
+     *
+     * @return AbstractPaginator
+     */
+    protected function runPaginateQuery($query, $perPage)
+    {
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Runs the get query
+     *
+     * @param Builder $query
+     *
+     * @return Collection
+     */
+    protected function runGetQuery($query)
+    {
+        return $query->get();
     }
 
     /**
