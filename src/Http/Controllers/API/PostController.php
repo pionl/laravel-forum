@@ -4,6 +4,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Riari\Forum\Models\Post;
 use Riari\Forum\Models\Thread;
+use Riari\Forum\Support\ConfigModel;
 
 class PostController extends BaseController
 {
@@ -71,7 +72,7 @@ class PostController extends BaseController
     {
         $this->validate($request, ['thread_id' => ['required'], 'author_id' => ['required'], 'content' => ['required']]);
 
-        $thread = ConfigModel::modelClass("thread")->find($request->input('thread_id'));
+        $thread = ConfigModel::gate("thread")->find($request->input('thread_id'));
         $this->authorize('reply', $thread);
 
         $post = $this->model()->create($request->only(['thread_id', 'post_id', 'author_id', 'content']));

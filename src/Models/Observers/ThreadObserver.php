@@ -17,7 +17,7 @@ class ThreadObserver
     public function updating($thread)
     {
         if ($thread->getOriginal('category_id') != $thread->category_id) {
-            $oldCategory = ConfigModel::objectClass("category")->find($thread->getOriginal('category_id'));
+            $oldCategory = ConfigModel::gate("category")->find($thread->getOriginal('category_id'));
             $postCount = $thread->posts->count();
 
             // Decrement the old category's thread and post counts
