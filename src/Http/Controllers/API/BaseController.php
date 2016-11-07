@@ -323,17 +323,17 @@ abstract class BaseController extends Controller
      * Based on config decides if we can run paginate or standard get query and filters the entries via provided function
      * or value
      *
-     * @param Request          $request
+     * @param Request         $request
      * @param Builder         $query
-     * @param string          $configKeyForPaginate
+     * @param string          $configKeyForPreferences
      * @param string|\Closure $filter
      *
      * @return JsonResponse|Response
      */
-    protected function responseWithQueryAndFilter($request, $query, $configKeyForPaginate, $filter)
+    protected function responseWithQueryAndFilter($request, $query, $configKeyForPreferences, $filter)
     {
         // run the response with query
-        return $this->responseWithQuery($request, $query, $configKeyForPaginate, function ($paginateOrCollection) use ($filter) {
+        return $this->responseWithQuery($request, $query, $configKeyForPreferences, function ($paginateOrCollection) use ($filter) {
 
             // checks if the content is paginate and runs the filter on the collection
             // in the paginate object
@@ -358,18 +358,24 @@ abstract class BaseController extends Controller
      *
      * @param Request       $request
      * @param Builder       $query
-     * @param string        $configKeyForPaginate
+     * @param string        $configKeyForPreferences
      * @param \Closure|null $handleCollectionCallback must returns the final collection or paginate
      *
      * @return Collection|AbstractPaginator
      */
-    protected function runResponseQuery($request, $query, $configKeyForPaginate, $handleCollectionCallback = null)
+    protected function runResponseQuery($request, $query, $configKeyForPreferences, $handleCollectionCallback = null)
     {
         // apply request scopes
         $query->withRequestScopes($request);
 
         // check if paging is enabled and not zero
-        $perPage = $this->getPerPageForConfigKey($configKeyForPaginate);
+        $perPage = $this->getPerPageForConfigKey($configKeyForPreferences);
+        $order = $this->getOrderForConfigKey($configKeyForPreferences);
+
+        if (!is_null($order)) {
+            list($column, $way) = $order;
+            $query->orderBy($column, $way);
+        }
 
         if ($perPage > 0) {
             // run the paginate
@@ -428,6 +434,19 @@ abstract class BaseController extends Controller
         }
 
         return config("forum.preferences.pagination.".$configKeyForPaginate, 20);
+    }
+
+    /**
+     * Returns the count of items per page for given config key.
+     * If 0 is returned, the paginate is disabled
+     *
+     * @param string $configKeyForPaginate
+     *
+     * @return int|mixed
+     */
+    protected function getOrderForConfigKey($configKeyForPaginate)
+    {
+        return config("forum.api.order.".$configKeyForPaginate, null);
     }
 
     /**

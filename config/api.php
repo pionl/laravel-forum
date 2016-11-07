@@ -16,6 +16,19 @@ return [
     |
     */
 
-    'token' => env('FORUM_API_TOKEN', str_random(32))
+    'token' => env('FORUM_API_TOKEN', str_random(32)),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Order for api lists
+    |--------------------------------------------------------------------------
+    |
+    | Here we can specify the correct order of results.
+    |
+    */
+    'order' => [
+        'categories'    => ['id', 'ASC'],
+        'threads'       => ['id', 'ASC'],
+        'posts'         => ['id', 'ASC']
+    ]
 ];
